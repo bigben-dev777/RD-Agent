@@ -84,34 +84,36 @@ def load_and_process_one_pdf_by_azure_document_intelligence(
     return result.content
 
 
-def load_and_process_pdfs_by_azure_document_intelligence(path: Path) -> dict[str, str]:
-    assert RD_AGENT_SETTINGS.azure_document_intelligence_key is not None
-    assert RD_AGENT_SETTINGS.azure_document_intelligence_endpoint is not None
+# def load_and_process_pdfs_by_azure_document_intelligence(path: Path) -> dict[str, str]:
+#     assert RD_AGENT_SETTINGS.azure_document_intelligence_key is not None
+#     assert RD_AGENT_SETTINGS.azure_document_intelligence_endpoint is not None
 
-    content_dict = {}
-    ab_path = path.resolve()
-    if ab_path.is_file():
-        assert ".pdf" in ab_path.suffixes, "The file must be a PDF file."
-        proc = load_and_process_one_pdf_by_azure_document_intelligence
-        content_dict[str(ab_path)] = proc(
-            ab_path,
-            RD_AGENT_SETTINGS.azure_document_intelligence_key,
-            RD_AGENT_SETTINGS.azure_document_intelligence_endpoint,
-        )
-    else:
-        for file_path in ab_path.rglob("*"):
-            if file_path.is_file() and ".pdf" in file_path.suffixes:
-                content_dict[str(file_path)] = load_and_process_one_pdf_by_azure_document_intelligence(
-                    file_path,
-                    RD_AGENT_SETTINGS.azure_document_intelligence_key,
-                    RD_AGENT_SETTINGS.azure_document_intelligence_endpoint,
-                )
-    return content_dict
+#     content_dict = {}
+#     ab_path = path.resolve()
+#     if ab_path.is_file():
+#         assert ".pdf" in ab_path.suffixes, "The file must be a PDF file."
+#         proc = load_and_process_one_pdf_by_azure_document_intelligence
+#         content_dict[str(ab_path)] = proc(
+#             ab_path,
+#             RD_AGENT_SETTINGS.azure_document_intelligence_key,
+#             RD_AGENT_SETTINGS.azure_document_intelligence_endpoint,
+#         )
+#     else:
+#         for file_path in ab_path.rglob("*"):
+#             if file_path.is_file() and ".pdf" in file_path.suffixes:
+#                 content_dict[str(file_path)] = load_and_process_one_pdf_by_azure_document_intelligence(
+#                     file_path,
+#                     RD_AGENT_SETTINGS.azure_document_intelligence_key,
+#                     RD_AGENT_SETTINGS.azure_document_intelligence_endpoint,
+#                 )
+#     return content_dict
 
 
 def extract_first_page_screenshot_from_pdf(pdf_path: str) -> Image:
     if not Path(pdf_path).exists():
-        doc = fitz.open(stream=io.BytesIO(requests.get(pdf_path).content), filetype="pdf")
+        doc = fitz.open(
+            stream=io.BytesIO(requests.get(pdf_path).content), filetype="pdf"
+        )
     else:
         doc = fitz.open(pdf_path)
     page = doc.load_page(0)
